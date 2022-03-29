@@ -407,7 +407,7 @@ def get_prop():
     except:
         truth_table.config(text="=          Error         =")
 
-    #print(exp)
+
 ##========Up MENU==========================================
 mnu=Frame(ventana, width=950, height=150, background="grey")
 mnu.pack(side="top")
@@ -415,14 +415,18 @@ etiqueta1=Label(mnu, text="MENU", font="Helvetica 20")
 etiqueta1.place(x=20, y=20)
 boton_info=Button(mnu, text="INFO", height=2, width=8, command=lambda:[t_t_m.place_forget(),frame_tt.place_forget(),info.place(x=50, y=240)])
 boton_info.place(x=20,y=55)
-boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=20, command=lambda: [info.place_forget(),t_t_m.place(x=50, y=180),frame_tt.place(x=50, y=300)])
+boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=15, command=lambda: [info.place_forget(),t_t_m.place(x=50, y=180),frame_tt.place(x=50, y=300)])
 boton_ttm.place(x=150,y=55)
+boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, command=lambda:["POR DEFINIR"])
+boton_sets.place(x=340, y=55)
+
 
 ## ========== INFO ==========================================
 info=Frame(ventana, width=760, height=500, background="Black")
 info.place(x=20, y=180)
 welcome=Label(info, text="Fundamentos de ciencias computacionales\n ToolKit", font="Arial 35 bold", )
 welcome.pack(side="top")
+
 
 #=============Truth table generator section==================
 t_t_m=Frame(ventana, width=760, height=120, background="grey")
