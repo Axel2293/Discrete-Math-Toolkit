@@ -1,6 +1,7 @@
 
 
-from tkinter import NW, Button, Entry, Frame, Label, Tk
+from tkinter import *
+from tkinter import ttk
 import re
 from tabulate import tabulate
 
@@ -382,7 +383,10 @@ def main(exp):
     ## ======== Tabulamos la tabla de verdad con nuestro HEADER(variables y expresiones) y las filas(Valores T-F para variables y evaluaciones)
     #  Libreria de Sergei Astanin https://github.com/astanin/python-tabulate
     truth_table.config(text=tabulate(rows,headers=encabezado,tablefmt='pretty'))
-    
+
+        #End section of TTG
+#==========================================================================================#
+        #Start section SETS
 
 
 
@@ -417,7 +421,7 @@ boton_info=Button(mnu, text="INFO", height=2, width=8, command=lambda:[t_t_m.pla
 boton_info.place(x=20,y=55)
 boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=15, command=lambda: [info.place_forget(),t_t_m.place(x=50, y=180),frame_tt.place(x=50, y=300)])
 boton_ttm.place(x=150,y=55)
-boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, command=lambda:["POR DEFINIR"])
+boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, command=lambda:[info.place_forget(), t_t_m.place_forget(), sets_frame.place(x=50, y=180)])
 boton_sets.place(x=340, y=55)
 
 
@@ -443,6 +447,39 @@ rules_tt.pack(side="right",anchor=NW)
 frame_tt=Frame(ventana,width=760, height=300, background="grey")
 truth_table=Label(frame_tt)
 truth_table.pack(fill="x", expand=True,anchor=NW)
+
+#========Sets=============================
+sets_frame=Frame(ventana, width=760, height=400, background="grey")
+tag_sets=Label(sets_frame, text="Conjuntos", font="Helvetica 20")
+tag_sets.place(x=0, y=0)
+seta_label=Label(sets_frame, text="A")
+seta_label.place(x=10,y=40)
+setb_label=Label(sets_frame, text="B")
+setb_label.place(x=10,y=80)
+setc_label=Label(sets_frame, text="C")
+setc_label.place(x=10,y=120)
+    ## ===ENTRY FOR SETS OF USER=== ##
+sets_a=Entry(sets_frame, width=25)
+sets_a.place(x=40, y=40)
+sets_b=Entry(sets_frame, width=25)
+sets_b.place(x=40, y=80)
+sets_b=Entry(sets_frame, width=25)
+sets_b.place(x=40, y=120)
+
+#=====Operaciones=====================#
+tag_operator=Label(sets_frame, text="Operaciones", font="Helvetica 20")
+tag_operator.place(x=0, y=160)
+operators=["UNION", "INTERSECCION", "DIFERENCIA", "DIFERENCIA SIMETRICA"]
+op_selec=ttk.Combobox(sets_frame,
+    state="readonly",
+    values=operators)
+op_selec.place(x=150, y=160)
+
+
+
+
+
+
 
 #========Main loop
 ventana.mainloop()
