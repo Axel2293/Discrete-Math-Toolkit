@@ -452,11 +452,11 @@ truth_table.pack(fill="x", expand=True,anchor=NW)
 sets_frame=Frame(ventana, width=760, height=400, background="grey")
 tag_sets=Label(sets_frame, text="Conjuntos", font="Helvetica 20")
 tag_sets.place(x=0, y=0)
-seta_label=Label(sets_frame, text="A")
+seta_label=Label(sets_frame, text="A={")
 seta_label.place(x=10,y=40)
-setb_label=Label(sets_frame, text="B")
+setb_label=Label(sets_frame, text="B={")
 setb_label.place(x=10,y=80)
-setc_label=Label(sets_frame, text="C")
+setc_label=Label(sets_frame, text="C={")
 setc_label.place(x=10,y=120)
     ## ===ENTRY FOR SETS OF USER=== ##
 sets_a=Entry(sets_frame, width=25)
@@ -467,13 +467,14 @@ sets_b=Entry(sets_frame, width=25)
 sets_b.place(x=40, y=120)
 
 #=====Operaciones=====================#
-tag_operator=Label(sets_frame, text="Operaciones", font="Helvetica 20")
+tag_operator=Label(sets_frame, text="Operadores", font="Helvetica 20")
 tag_operator.place(x=0, y=160)
-operators=["UNION", "INTERSECCION", "DIFERENCIA", "DIFERENCIA SIMETRICA"]
+operators=["Union", "Interseccion", "Diferencia", "Diferencia simetrica"]
 op_selec=ttk.Combobox(sets_frame,
     state="readonly",
     values=operators)
 op_selec.place(x=150, y=160)
+
 
 
 
