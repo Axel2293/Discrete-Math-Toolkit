@@ -3,6 +3,7 @@
 from tkinter import *
 from tkinter import ttk
 import re
+from setuptools import Command
 from tabulate import tabulate
 
 
@@ -387,10 +388,95 @@ def main(exp):
         #End section of TTG
 #==========================================================================================#
         #Start section SETS
+# Recieves the set and returs the total number of elements CARDINALIDAD
+def cardinalidad(set_prueba):
+    non_set=[]
+    set_prueba=list(set_prueba)
+    for i in range(len(set_prueba)):
+        if set_prueba[i] not in non_set:
+            non_set.append(set_prueba[i])
+    return len(non_set)
 
 
+#================UNION=========
 
+    # 3 sets UNION
+def union(set_a, set_b, set_c):
+    set_a=list(set_a)
+    set_b=list(set_b)
+    set_c=list(set_c)
 
+    res=list()
+    # AUB
+    res=set_a
+    for i in range(len(set_b)):
+        if set_b[i] not in res:
+            res.append(set_b[i])
+    i=0
+    for i in range(len(set_c)):
+        if set_c[i] not in res:
+            res.append(set_c[i])
+    return set(res)
+    
+    # 2 sets union
+def union_2(set_1, set_2):
+    set_1=list(set_1)
+    set_2=list(set_2)
+    res=list()
+
+    res=set_1
+    for i in range(len(set_2)):
+        if set_2[i] not in res:
+            res.append(set_2[i])
+    
+    return res
+## =====INTERSECCION=============
+def inter_3(set_1, set_2, set_3):
+    set_1=list(set_1)
+    set_2=list(set_2)
+    set_3=list(set_3)
+    res=list()
+    res_1_2=list()
+    res_1_2=inter_2(set_1,set_2)
+    for i in range(len(set_3)):
+        if set_3[i] in res_1_2:
+            res.append(set_3[i])
+    return res
+
+def inter_2(set_1,set_2):
+    set_1=list(set_1)
+    set_2=list(set_2)
+    res=list()
+    
+    for i in range(len(set_2)):
+        if set_2[i] in set_1:
+            res.append(set_2[i])
+    return res
+
+#====Diferencia============
+def diferencia(set_1,set_2):
+    set_1=list(set_1)
+    set_2=list(set_2)
+    res=list()
+    #  s1  -  s2    
+    for i in range(len (set_1)):
+        if set_1[i] in set_2:
+            pass
+        elif set_1[i] not in set_2:
+            res.append(set_1[i])
+    return res
+#===Diferencia simétrica==
+def dif_sim(set_1, set_2):
+    set_1=list(set_1)
+    set_2=list(set_2)
+    # Using equivalent (A-B) Union (B-A)
+    temp_1=diferencia(set_1,set_2)
+    temp_2=diferencia(set_2, set_1)
+    res=union_2(temp_1, temp_2)
+    return res
+    
+    #End section of sets
+#=========================================================
 
 ventana=Tk()
 
@@ -400,6 +486,13 @@ ventana.geometry("800x600")
 ventana.config(bg="white")
 
 exp=""
+operator_selec=[]
+union_op=["A∪B", "A∪C","B∪C", "A∪(B∪C)"]
+int_op=["A∩B", "A∩C", "B∩C", "A∩(B∩C)"]
+dif_op=["A-B", "A-C", "B-C"]
+dif_sim_op=["A∆B","B∆C","A∆C"]
+card=["|A|", "|B|", "|C|"]
+
 def get_prop():
     exp=""
     exp= exp_entry.get()
@@ -411,17 +504,135 @@ def get_prop():
     except:
         truth_table.config(text="=          Error         =")
 
+def update_options(selection):
+    global union_op, int_op, dif_op, dif_sim_op,card
+    
+    if selection=="Union":
+        operator_selec=union_op
+    elif selection=="Interseccion":
+        operator_selec=int_op
+    elif selection=="Diferencia":
+        operator_selec=dif_op
+    elif selection=="Diferencia simetrica":
+        operator_selec=dif_sim_op
+    elif selection=="Cardinalidad":
+        operator_selec=card
+    else:
+        print("No funciono jeje")
+    selec_option.config(values=operator_selec)
+    selec_option.current(0)
+def str_list(string_set):
+    final_set_list=list()
+    for i in range(len(string_set)):
+        if string_set[i]!=",":
+            final_set_list.append(string_set[i])
+        else:
+            pass
+    return final_set_list
 
+def calculate_result():
+    global union_op, int_op, dif_op, dif_sim_op,card
+        #Seleccion del usuario
+    selection=selec_option.get()
+        #Sets a trabajar str a list
+    set_a_fu=str_list(sets_a.get())
+    set_b_fu=str_list(sets_b.get())
+    set_c_fu=str_list(sets_c.get())
+    res_text=selec_option.get()
+    try:
+        if selection in union_op:
+                #Case if 3 operation vars
+            if selection==union_op[-1]:
+                res=union(set_a_fu,set_b_fu,set_c_fu)
+                res_text="Union A∪(B∪C) = {0}".format(res)                
+                res_lable.config(text=res_text)
+                #Cases if 2 sets
+            elif selection==union_op[0]:
+                res=union_2(set_a_fu, set_b_fu)
+                res_text="Union A∪B = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==union_op[1]:
+                res=union_2(set_a_fu, set_c_fu)
+                res_text="Union A∪C = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==union_op[2]:
+                res=union_2(set_b_fu, set_c_fu)
+                res_text="Union B∪C = {0}".format(res)
+                res_lable.config(text=res_text)
+        elif selection in int_op:
+            if selection==int_op[-1]:
+                res=inter_3(set_a_fu,set_b_fu,set_c_fu)
+                res_text="Interseccion A∩(B∩C) = {0}".format(res)                
+                res_lable.config(text=res_text)
+                #Cases if 2 sets
+            elif selection==int_op[0]:
+                res=inter_2(set_a_fu, set_b_fu)
+                res_text="Interseccion A∩B = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==int_op[1]:
+                res=inter_2(set_a_fu, set_c_fu)
+                res_text="UInterseccion A∩C = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==int_op[2]:
+                res=inter_2(set_b_fu, set_c_fu)
+                res_text="Interseccion B∩C = {0}".format(res)
+                res_lable.config(text=res_text)
+        elif selection in dif_op:
+            if selection==dif_op[0]:
+                res=diferencia(set_a_fu, set_b_fu)
+                res_text="Diferencia A-B = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==dif_op[1]:
+                res=diferencia(set_a_fu, set_c_fu)
+                res_text="Diferencia A-C = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==dif_op[2]:
+                res=diferencia(set_b_fu, set_c_fu)
+                res_text="Diferencia B-C = {0}".format(res)
+                res_lable.config(text=res_text)
+        elif selection in dif_sim_op:
+            if selection==dif_op[0]:
+                res=dif_sim(set_a_fu, set_b_fu)
+                res_text="Diferencia simetrica A∆B = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==dif_op[1]:
+                res=dif_sim(set_a_fu, set_c_fu)
+                res_text="Diferencia simetrica A∆C = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==dif_op[2]:
+                res=dif_sim(set_b_fu, set_c_fu)
+                res_text="Diferencia simetrica B∆C = {0}".format(res)
+                res_lable.config(text=res_text)
+        elif selection in card:
+            if selection==card[0]:
+                res=cardinalidad(set_a_fu)
+                res_text="Cardinalidad |A| = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==card[1]:
+                res=cardinalidad(set_b_fu)
+                res_text="Cardinalidad |B| = {0}".format(res)
+                res_lable.config(text=res_text)
+            elif selection==card[2]:
+                res=cardinalidad(set_c_fu)
+                res_text="Cardinalidad |C| = {0}".format(res)
+                res_lable.config(text=res_text)
+        else:
+            res_lable.config(text="!Error!")
+    except:
+        res_lable.config(text="!Error!")
 ##========Up MENU==========================================
 mnu=Frame(ventana, width=950, height=150, background="grey")
 mnu.pack(side="top")
 etiqueta1=Label(mnu, text="MENU", font="Helvetica 20")
 etiqueta1.place(x=20, y=20)
-boton_info=Button(mnu, text="INFO", height=2, width=8, command=lambda:[t_t_m.place_forget(),frame_tt.place_forget(),info.place(x=50, y=240)])
+boton_info=Button(mnu, text="INFO", height=2, width=8, 
+    command=lambda:[t_t_m.place_forget(),frame_tt.place_forget(),sets_frame.place_forget(),info.place(x=50, y=240)])
 boton_info.place(x=20,y=55)
-boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=15, command=lambda: [info.place_forget(),t_t_m.place(x=50, y=180),frame_tt.place(x=50, y=300)])
+boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=15, 
+    command=lambda: [info.place_forget(),sets_frame.place_forget(),t_t_m.place(x=50, y=180),frame_tt.place(x=50, y=300)])
 boton_ttm.place(x=150,y=55)
-boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, command=lambda:[info.place_forget(), t_t_m.place_forget(), sets_frame.place(x=50, y=180)])
+boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, 
+    command=lambda:[info.place_forget(), t_t_m.place_forget(), sets_frame.place(x=50, y=180)])
 boton_sets.place(x=340, y=55)
 
 
@@ -450,6 +661,7 @@ truth_table.pack(fill="x", expand=True,anchor=NW)
 
 #========Sets=============================
 sets_frame=Frame(ventana, width=760, height=400, background="grey")
+
 tag_sets=Label(sets_frame, text="Conjuntos", font="Helvetica 20")
 tag_sets.place(x=0, y=0)
 seta_label=Label(sets_frame, text="A={")
@@ -463,24 +675,37 @@ sets_a=Entry(sets_frame, width=25)
 sets_a.place(x=40, y=40)
 sets_b=Entry(sets_frame, width=25)
 sets_b.place(x=40, y=80)
-sets_b=Entry(sets_frame, width=25)
-sets_b.place(x=40, y=120)
+sets_c=Entry(sets_frame, width=25)
+sets_c.place(x=40, y=120)
 
-#=====Operaciones=====================#
+#=====Operaciones Disponibles=====================#
 tag_operator=Label(sets_frame, text="Operadores", font="Helvetica 20")
 tag_operator.place(x=0, y=160)
-operators=["Union", "Interseccion", "Diferencia", "Diferencia simetrica"]
+operators=["Union", "Interseccion", "Diferencia", "Diferencia simetrica", "Cardinalidad"]
 op_selec=ttk.Combobox(sets_frame,
-    state="readonly",
+    state="",
     values=operators)
+op_selec.current(0)
 op_selec.place(x=150, y=160)
+bot_act=Button(sets_frame, text="Guardar", command=lambda:[update_options(op_selec.get())])
+bot_act.place(x=370, y=160)
+
+#====Opciones=====================================
+tag_options=Label(sets_frame, text="Operaciones", font="Helvetica 20")
+tag_options.place(x=0, y=200)
 
 
+selec_option=ttk.Combobox(sets_frame)
+selec_option.place(x=150, y=200)
 
-
-
-
-
-
+##=====Calcular resultado============
+res_buttton= Button(sets_frame, text="Calcular resultado", command=lambda:[calculate_result()])
+res_buttton.place(x=370, y=200)
+#sets_frame.after(1000,print("Hola"))
+#update_options(op_selec.get())
+#op_selec.bind("<<ComoboxSelected>>", update_options(op_selec.get()))    
+#=======Show result==================
+res_lable=Label(sets_frame, text="Result is shown here")
+res_lable.place(x=0, y=240)
 #========Main loop
 ventana.mainloop()
