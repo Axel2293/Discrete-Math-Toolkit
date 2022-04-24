@@ -1,9 +1,12 @@
 
-
+from cgitb import text
+from tkinter import Label,Button, StringVar,ttk,Entry,Frame,Tk, Text
 from tkinter import *
-from tkinter import ttk
+from turtle import width
+
+from PIL import Image, ImageTk 
+
 import re
-from setuptools import Command
 from tabulate import tabulate
 
 
@@ -383,7 +386,7 @@ def main(exp):
 
     ## ======== Tabulamos la tabla de verdad con nuestro HEADER(variables y expresiones) y las filas(Valores T-F para variables y evaluaciones)
     #  Libreria de Sergei Astanin https://github.com/astanin/python-tabulate
-    truth_table.config(text=tabulate(rows,headers=encabezado,tablefmt='pretty'))
+    truth_table.insert(END,tabulate(rows,headers=encabezado,tablefmt='pretty'))
 
         #End section of TTG
 #==========================================================================================#
@@ -477,11 +480,63 @@ def dif_sim(set_1, set_2):
     
     #End section of sets
 #=========================================================
+    #Start section of sucesiones
+
+#Calculates the aₖ given k
+
+def general_termsKN(n, k, ak):
+    global final_res
+    n=int(n)
+    k=int(k)
+    if k<=n:
+        final_res+="Termino a({}) = {:.4f}\n".format(k,general_term(k, ak))
+        general_termsKN(n,k+1,ak)
+    else: 
+        return 0
+
+
+def general_term(k, ak):
+    ak.replace("k", str(k))
+    return eval(ak)
+
+
+    #Global var for the result
+final_res="""Los terminos aₖ se muestran aqui"""
+# Sum of the aₖ terms (k to n) RECURSIVE
+def sum_ak(n, k, ak):
+    global final_res
+    n=int(n)
+    k=int(k)
+    sum=float()
+    if k<=n:
+        sum=general_term(k,ak)
+        # Limit to 4 decimals the shown result
+        final_res+="Termino a({}) = {:.4f}\n".format(k,sum)
+        #Calculations with recursive function
+        sum+=sum_ak(n,k+1,ak)
+        return sum
+    else:
+        return 0
+
+# Product of the aₖ terms (k to n) RECURSIVE
+def product_ak(n, k ,ak):
+    global final_res
+    n=int(n)
+    k=int(k)
+    product=float()
+    if k<=n: 
+        product=general_term(k,ak)
+        # Limit to 4 decimals the shown result
+        final_res+="Termino a({}) = {:.4f}\n".format(k,product)
+        #Calculations with recursive function
+        product= product*sum_ak(n,k+1,ak)
+        return product
+    else:
+        return 0
 
 ventana=Tk()
 
 ventana.title("FCC TOOLKIT 2022")
-ventana.iconbitmap("Tkinter.ico")
 ventana.geometry("800x600")
 ventana.config(bg="white")
 
@@ -493,17 +548,23 @@ dif_op=["A-B", "A-C", "B-C"]
 dif_sim_op=["A∆B","B∆C","A∆C"]
 card=["|A|", "|B|", "|C|"]
 
+
+#TTG section
 def get_prop():
     exp=""
     exp= exp_entry.get()
     exp=exp.upper()
     exp=exp.replace(" ", "")
-    truth_table.config(text="")
+    truth_table.delete("1.0", "end")
     try:
         main(exp)
     except:
-        truth_table.config(text="=          Error         =")
+        truth_table.insert(END,"=          Error         =")
 
+def insert_op(operation):
+    exp_entry.insert(END, operation)
+
+#SETS section
 def update_options(selection):
     global union_op, int_op, dif_op, dif_sim_op,card
     
@@ -522,12 +583,7 @@ def update_options(selection):
     selec_option.config(values=operator_selec)
     selec_option.current(0)
 def str_list(string_set):
-    final_set_list=list()
-    for i in range(len(string_set)):
-        if string_set[i]!=",":
-            final_set_list.append(string_set[i])
-        else:
-            pass
+    final_set_list=list(string_set.split(","))
     return final_set_list
 
 def calculate_result():
@@ -545,124 +601,257 @@ def calculate_result():
             if selection==union_op[-1]:
                 res=union(set_a_fu,set_b_fu,set_c_fu)
                 res_text="Union A∪(B∪C) = {0}".format(res)                
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
                 #Cases if 2 sets
             elif selection==union_op[0]:
                 res=union_2(set_a_fu, set_b_fu)
                 res_text="Union A∪B = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==union_op[1]:
                 res=union_2(set_a_fu, set_c_fu)
                 res_text="Union A∪C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==union_op[2]:
                 res=union_2(set_b_fu, set_c_fu)
                 res_text="Union B∪C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
         elif selection in int_op:
             if selection==int_op[-1]:
                 res=inter_3(set_a_fu,set_b_fu,set_c_fu)
                 res_text="Interseccion A∩(B∩C) = {0}".format(res)                
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
                 #Cases if 2 sets
             elif selection==int_op[0]:
                 res=inter_2(set_a_fu, set_b_fu)
                 res_text="Interseccion A∩B = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==int_op[1]:
                 res=inter_2(set_a_fu, set_c_fu)
                 res_text="UInterseccion A∩C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==int_op[2]:
                 res=inter_2(set_b_fu, set_c_fu)
                 res_text="Interseccion B∩C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
         elif selection in dif_op:
             if selection==dif_op[0]:
                 res=diferencia(set_a_fu, set_b_fu)
                 res_text="Diferencia A-B = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==dif_op[1]:
                 res=diferencia(set_a_fu, set_c_fu)
                 res_text="Diferencia A-C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==dif_op[2]:
                 res=diferencia(set_b_fu, set_c_fu)
                 res_text="Diferencia B-C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
         elif selection in dif_sim_op:
-            if selection==dif_op[0]:
+            if selection==dif_sim_op[0]:
                 res=dif_sim(set_a_fu, set_b_fu)
                 res_text="Diferencia simetrica A∆B = {0}".format(res)
-                res_lable.config(text=res_text)
-            elif selection==dif_op[1]:
+                set_res.set(res_text)
+            elif selection==dif_sim_op[1]:
                 res=dif_sim(set_a_fu, set_c_fu)
                 res_text="Diferencia simetrica A∆C = {0}".format(res)
-                res_lable.config(text=res_text)
-            elif selection==dif_op[2]:
+                set_res.set(res_text)
+            elif selection==dif_sim_op[2]:
                 res=dif_sim(set_b_fu, set_c_fu)
                 res_text="Diferencia simetrica B∆C = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
         elif selection in card:
             if selection==card[0]:
                 res=cardinalidad(set_a_fu)
                 res_text="Cardinalidad |A| = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==card[1]:
                 res=cardinalidad(set_b_fu)
                 res_text="Cardinalidad |B| = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
             elif selection==card[2]:
                 res=cardinalidad(set_c_fu)
                 res_text="Cardinalidad |C| = {0}".format(res)
-                res_lable.config(text=res_text)
+                set_res.set(res_text)
         else:
             res_lable.config(text="!Error!")
     except:
         res_lable.config(text="!Error!")
+
+
+#=====successions=======
+def ak_operations(opt):
+    global final_res
+    final_res=""
+    sum_res=0
+    str_sum=str()
+    product_res=0
+    str_product=str()
+    result_ak.delete("1.0", "end")
+    
+
+    try:
+        if opt==1:
+            sum_res=sum_ak(n_lim.get(), k_lim.get(), ak_user.get())
+            str_sum="Suma = {:.6f}".format(sum_res)
+            sum_res_entry.set(str_sum)
+        elif opt==2:
+            product_res=product_ak(n_lim.get(), k_lim.get(), ak_user.get())
+            str_product="Producto = {:.6f}".format(product_res)
+            product_res_entry.set(str_product)
+        elif opt==3:
+            general_termsKN(n_lim.get(), k_lim.get(), ak_user.get())
+
+        result_ak.insert("end", final_res)
+    except:
+        result_ak.insert("end", """ERROR : Intenta cuidar tus valores de n y k""")
+
+def clean_output():
+    result_ak.delete("1.0", "end")
+    product_res_entry.set("Producto :")
+    sum_res_entry.set("Suma :")
+#=====MENU=============
+def change_menu(option):
+    if option=="INFO":
+        t_t_m.place_forget()
+        frame_tt.place_forget()
+        sets_frame.place_forget()
+        suceciones_frame.place_forget()
+        info.place(x=50, y=240)
+    elif option=="TTG":
+        info.place_forget()
+        sets_frame.place_forget()
+        suceciones_frame.place_forget()
+        t_t_m.place(x=50, y=180)
+        frame_tt.place(x=50, y=300)
+    elif option=="SETS":
+        info.place_forget()
+        t_t_m.place_forget() 
+        frame_tt.place_forget()
+        suceciones_frame.place_forget()
+        sets_frame.place(x=50, y=180)
+    elif option=="Suc":
+        info.place_forget()
+        t_t_m.place_forget() 
+        frame_tt.place_forget()
+        sets_frame.place_forget()
+        suceciones_frame.place(x=50, y=180)
+
 ##========Up MENU==========================================
-mnu=Frame(ventana, width=950, height=150, background="grey")
+mnu=Frame(ventana, width=950, height=100, background="grey")
 mnu.pack(side="top")
-etiqueta1=Label(mnu, text="MENU", font="Helvetica 20")
-etiqueta1.place(x=20, y=20)
+etiqueta1=Label(mnu, text="MENU", font="Helvetica 20", background="grey")
+etiqueta1.place(x=20, y=15)
 boton_info=Button(mnu, text="INFO", height=2, width=8, 
-    command=lambda:[t_t_m.place_forget(),frame_tt.place_forget(),sets_frame.place_forget(),info.place(x=50, y=240)])
+    command=lambda:[change_menu("INFO")])
 boton_info.place(x=20,y=55)
 boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=15, 
-    command=lambda: [info.place_forget(),sets_frame.place_forget(),t_t_m.place(x=50, y=180),frame_tt.place(x=50, y=300)])
+    command=lambda: [change_menu("TTG")])
 boton_ttm.place(x=150,y=55)
 boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, 
-    command=lambda:[info.place_forget(), t_t_m.place_forget(), sets_frame.place(x=50, y=180)])
+    command=lambda:[change_menu("SETS")])
 boton_sets.place(x=340, y=55)
 
+boton_suc=Button(mnu ,text="Sucesiones", height=2, width=11,
+    command=lambda:[change_menu("Suc")])
+boton_suc.place(x=490, y=55)
 
 ## ========== INFO ==========================================
 info=Frame(ventana, width=760, height=500, background="Black")
 info.place(x=20, y=180)
-welcome=Label(info, text="Fundamentos de ciencias computacionales\n ToolKit", font="Arial 35 bold", )
+welcome=Label(info, text="Fundamentos de ciencias computacionales\n ToolKit", font="Arial 27 bold", )
 welcome.pack(side="top")
 
 
 #=============Truth table generator section==================
-t_t_m=Frame(ventana, width=760, height=120, background="grey")
-etiqueta_exp=Label(t_t_m, text="Pon tu proposición", font="Helvetica 20",background="grey")
-etiqueta_exp.pack(side="left",)
-exp_entry=Entry(t_t_m, width=35)
-exp_entry.pack(side="left")
-boton_ttm=Button(t_t_m, text="Generar TT", height=1, width=10, command=lambda: [get_prop(), ])
-boton_ttm.pack(side="left")
+t_t_m=Frame(ventana, width=760,
+    height=120,
+    background="grey")
+etiqueta_exp=Label(t_t_m, 
+    text="Pon tu proposición", 
+    font="Helvetica 20",
+    background="grey")
+etiqueta_exp.place(
+    x=10,
+    y=10)
+
+    # Buttons of operators
+
+and_button=Button(t_t_m,
+    text="^",
+    command=lambda:[insert_op('^')]).place(
+        x=40,
+        y=80)
+or_button=Button(t_t_m,
+    text="V",
+    command=lambda:[insert_op('V')]).place(
+        x=70,
+        y=80)
+xor_button=Button(t_t_m,
+    text="+",
+    command=lambda:[insert_op('+')]).place(
+        x=100,
+        y=80)
+implication_button=Button(t_t_m,
+    text="→",
+    command=lambda:[insert_op('→')]).place(
+        x=130,
+        y=80)
+biconditional_button=Button(t_t_m,
+    text="↔",
+    command=lambda:[insert_op('↔')]).place(
+        x=160,
+        y=80)
+
+exp_strvar=StringVar()
+exp_entry=Entry(t_t_m, 
+    width=40,
+    textvariable=exp_strvar)
+exp_entry.place(
+    x=30,
+    y=50)
+boton_ttm=Button(t_t_m, 
+    text="Generar Tabla de Verdad", 
+    height=1, 
+    width=30, 
+    command=lambda: [get_prop() ])
+boton_ttm.place(
+    x=300, 
+    y=48)
         # Available operands for user to see
-rules_tt=Label(t_t_m,text="Operadores: \n•And- ^\n•Or- v\n•Xor- +\n•Implicación- →\n•Bicondicional- ↔")
-rules_tt.pack(side="right",anchor=NW)
+rules_tt=Label(t_t_m,
+    text="Operadores: \n•And- ^\n•Or- v\n•Xor- +\n•Implicación- →\n•Bicondicional- ↔")
+rules_tt.place(
+    x=530, 
+    y=15)
         #Placement of truth table on screen
-frame_tt=Frame(ventana,width=760, height=300, background="grey")
-truth_table=Label(frame_tt)
-truth_table.pack(fill="x", expand=True,anchor=NW)
+frame_tt=Frame(ventana)
+
+    # Scrollable table
+y_scroll_tt=Scrollbar(frame_tt, orient='vertical')
+y_scroll_tt.pack(side=RIGHT, fill="y")
+x_scroll_tt=Scrollbar(frame_tt, orient='horizontal')
+x_scroll_tt.pack(side='bottom', fill='x')
+    
+    # Text Truth Table
+truth_table=Text(frame_tt,
+    height=15, 
+    yscrollcommand=y_scroll_tt.set, 
+    xscrollcommand=x_scroll_tt.set, 
+    wrap=NONE)
+truth_table.pack(side=LEFT)
+
+    # Commands of the Scrollbars
+y_scroll_tt.config(command=truth_table.yview)
+x_scroll_tt.config(command=truth_table.xview)
+
 
 #========Sets=============================
 sets_frame=Frame(ventana, width=760, height=400, background="grey")
 
-tag_sets=Label(sets_frame, text="Conjuntos", font="Helvetica 20")
+tag_sets=Label(sets_frame, 
+    text="Conjuntos:", 
+    font="Helvetica 20", 
+    background="grey")
 tag_sets.place(x=0, y=0)
 seta_label=Label(sets_frame, text="A={")
 seta_label.place(x=10,y=40)
@@ -679,33 +868,134 @@ sets_c=Entry(sets_frame, width=25)
 sets_c.place(x=40, y=120)
 
 #=====Operaciones Disponibles=====================#
-tag_operator=Label(sets_frame, text="Operadores", font="Helvetica 20")
+tag_operator=Label(sets_frame, 
+    text="Operadores: ", 
+    font="Helvetica 20", 
+    background="grey")
 tag_operator.place(x=0, y=160)
 operators=["Union", "Interseccion", "Diferencia", "Diferencia simetrica", "Cardinalidad"]
 op_selec=ttk.Combobox(sets_frame,
     state="",
     values=operators)
 op_selec.current(0)
-op_selec.place(x=150, y=160)
-bot_act=Button(sets_frame, text="Guardar", command=lambda:[update_options(op_selec.get())])
-bot_act.place(x=370, y=160)
+op_selec.place(x=200, y=170)
+bot_act=Button(sets_frame, 
+    text="Actualizar operaciones", 
+    command=lambda:[update_options(op_selec.get())])
+bot_act.place(x=410, y=170)
 
 #====Opciones=====================================
-tag_options=Label(sets_frame, text="Operaciones", font="Helvetica 20")
+tag_options=Label(sets_frame, 
+    text="Operaciones: ", 
+    font="Helvetica 20", 
+    background="grey")
 tag_options.place(x=0, y=200)
 
 
 selec_option=ttk.Combobox(sets_frame)
-selec_option.place(x=150, y=200)
+selec_option.place(x=200, y=210)
 
 ##=====Calcular resultado============
-res_buttton= Button(sets_frame, text="Calcular resultado", command=lambda:[calculate_result()])
-res_buttton.place(x=370, y=200)
+res_buttton= Button(sets_frame, 
+    text="Calcular resultado", 
+    command=lambda:[calculate_result()])
+res_buttton.place(x=410, y=210)
 #sets_frame.after(1000,print("Hola"))
 #update_options(op_selec.get())
 #op_selec.bind("<<ComoboxSelected>>", update_options(op_selec.get()))    
 #=======Show result==================
-res_lable=Label(sets_frame, text="Result is shown here")
-res_lable.place(x=0, y=240)
+set_res=StringVar()
+set_res.set("Result is shown here")
+res_lable=Entry(sets_frame, 
+    textvariable=set_res,
+    width=70)
+res_lable.place(x=0, y=270)
+
+#======= Sucesiones ==========
+
+#    IMAGES
+sum_img=ImageTk.PhotoImage(Image.open("sum.png"))
+product_img=ImageTk.PhotoImage(Image.open("product.png"))
+term_img=ImageTk.PhotoImage(Image.open("ak.png"))
+
+suceciones_frame=Frame(ventana, width=680, 
+    height=680, 
+    background="grey")
+
+# Buttons as images (Sum, product, terms)
+sum_img_buton=Button(suceciones_frame, 
+    image=sum_img,
+    command=lambda:[ak_operations(1)]).place(x=150, y=35)
+product_img_buton=Button(suceciones_frame, 
+    image=product_img,
+    command=lambda:[ak_operations(2)]).place(x=230, y=40)
+term_img_buton=Button(suceciones_frame, 
+    image=term_img,
+    command=lambda:[ak_operations(3)]).place(x=310, y=55)
+
+# n superior limit
+n_text=Label(suceciones_frame,
+    text="n = ",
+    font="Helvetica 15",
+    background="grey")
+n_text.place(x=20, y=12)
+n_lim=Entry(suceciones_frame, width=10)
+n_lim.place(x=60, y=10)
+
+# k inferior limit (start point)
+
+k_text=Label(suceciones_frame, 
+    text="k = ",
+    font="Helvetica 15",
+    background="grey")
+
+k_text.place(x=20, y=50)
+k_lim=Entry(suceciones_frame, width=10)
+k_lim.place(x=60, y=50)
+
+# aₖ the general term of the user
+
+ak_text=Label(suceciones_frame,
+    text="aₖ = ",
+    font="Helvetica 15",
+    background="grey").place(
+                        x=20, 
+                        y=85)
+ak_user=Entry(suceciones_frame, width=10)
+ak_user.place(x=60, y=87)
+# Options
+opt_lab=Label(suceciones_frame,
+    text="Presiona la opcion a calcular",
+    font="Helvetica 15").place(x=150, y=0)
+
+
+
+    # Results of the ak terms, not sum or product results
+
+ak_ext_frame=Frame(suceciones_frame)
+ak_ext_frame.place(x=10, y=140)
+scroll_ak=Scrollbar(ak_ext_frame, 
+    orient="vertical")
+scroll_ak.pack(side=RIGHT, fill="y")
+
+result_ak=Text(ak_ext_frame, yscrollcommand=scroll_ak.set, width=37, height=15)
+result_ak.insert("end", final_res)
+result_ak.pack(side=LEFT)
+     
+scroll_ak.config(command=result_ak.yview)
+
+sum_res_entry=StringVar()
+sum_res_screen=Entry(suceciones_frame, width=30, textvariable=sum_res_entry, state="readonly")
+sum_res_screen.place(x=350, y=150)
+
+product_res_entry=StringVar()
+product_res_screen=Entry(suceciones_frame, width=30, textvariable=product_res_entry, state="readonly")
+product_res_screen.place(x=350, y=200)
+
+clean_results=Button(suceciones_frame, 
+    text="Limpiar salidas",
+    command=lambda:[clean_output()])
+clean_results.place(x=350, y=250)
+
 #========Main loop
 ventana.mainloop()
