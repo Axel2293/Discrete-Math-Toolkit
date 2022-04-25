@@ -19,8 +19,17 @@ This tool is a calculator that can evaluate a list of variables and operands:
   - (p↔q) V ( r↔s)
   - (p→q)↔(~pVq)
 
+## Sets operations
+Simple sets operations caclulator for three sets (A,B,B)
+The elements in the sets can be numbers, letters and symbols, but remember comas are used to separate elements
+Available operations:
+ 1. Intersection
+ 2. Union
+ 3. Diference
+ 4. Symmetric Diference
+ 5. Cardinality
 
-
- ### Important
- (For the moment this toolkit only has the Truth table generator, but as i advance through my D-math clase i will be working on the other parts of the toolkit) 
- 
+## Successions (sum and product)
+General term, sum and product calculator
+This calculator uses recursivity to calculate every element of the general term
+The uper limit is n and the starting point or limit is k
