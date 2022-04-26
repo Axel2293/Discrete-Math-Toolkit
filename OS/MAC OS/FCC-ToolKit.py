@@ -1,8 +1,6 @@
 
-from cgitb import text
 from tkinter import Label,Button, StringVar,ttk,Entry,Frame,Tk, Text
 from tkinter import *
-from turtle import width
 
 from PIL import Image, ImageTk 
 
@@ -784,22 +782,22 @@ and_button=Button(t_t_m,
 or_button=Button(t_t_m,
     text="V",
     command=lambda:[insert_op('V')]).place(
-        x=70,
+        x=90,
         y=80)
 xor_button=Button(t_t_m,
     text="+",
     command=lambda:[insert_op('+')]).place(
-        x=100,
+        x=140,
         y=80)
 implication_button=Button(t_t_m,
     text="→",
     command=lambda:[insert_op('→')]).place(
-        x=130,
+        x=190,
         y=80)
 biconditional_button=Button(t_t_m,
     text="↔",
     command=lambda:[insert_op('↔')]).place(
-        x=160,
+        x=240,
         y=80)
 
 exp_strvar=StringVar()
@@ -812,16 +810,16 @@ exp_entry.place(
 boton_ttm=Button(t_t_m, 
     text="Generar Tabla de Verdad", 
     height=1, 
-    width=30, 
+    width=15, 
     command=lambda: [get_prop() ])
 boton_ttm.place(
-    x=300, 
+    x=420, 
     y=48)
         # Available operands for user to see
 rules_tt=Label(t_t_m,
     text="Operadores: \n•And- ^\n•Or- v\n•Xor- +\n•Implicación- →\n•Bicondicional- ↔")
 rules_tt.place(
-    x=530, 
+    x=600, 
     y=15)
         #Placement of truth table on screen
 frame_tt=Frame(ventana)
@@ -925,13 +923,13 @@ suceciones_frame=Frame(ventana, width=680,
 # Buttons as images (Sum, product, terms)
 sum_img_buton=Button(suceciones_frame, 
     image=sum_img,
-    command=lambda:[ak_operations(1)]).place(x=150, y=35)
+    command=lambda:[ak_operations(1)]).place(x=200, y=35)
 product_img_buton=Button(suceciones_frame, 
     image=product_img,
-    command=lambda:[ak_operations(2)]).place(x=230, y=40)
+    command=lambda:[ak_operations(2)]).place(x=300, y=40)
 term_img_buton=Button(suceciones_frame, 
     image=term_img,
-    command=lambda:[ak_operations(3)]).place(x=310, y=55)
+    command=lambda:[ak_operations(3)]).place(x=400, y=55)
 
 # n superior limit
 n_text=Label(suceciones_frame,
@@ -966,7 +964,7 @@ ak_user.place(x=60, y=87)
 # Options
 opt_lab=Label(suceciones_frame,
     text="Presiona la opcion a calcular",
-    font="Helvetica 15").place(x=150, y=0)
+    font="Helvetica 15").place(x=200, y=0)
 
 
 
