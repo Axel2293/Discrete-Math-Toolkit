@@ -832,7 +832,7 @@ x_scroll_tt.pack(side='bottom', fill='x')
     
     # Text Truth Table
 truth_table=Text(frame_tt,
-    height=15, 
+    height=20, width=97, 
     yscrollcommand=y_scroll_tt.set, 
     xscrollcommand=x_scroll_tt.set, 
     wrap=NONE)
@@ -911,10 +911,7 @@ res_lable.place(x=0, y=270)
 
 #======= Sucesiones ==========
 
-#    IMAGES
-sum_img=ImageTk.PhotoImage(Image.open("sum.png"))
-product_img=ImageTk.PhotoImage(Image.open("product.png"))
-term_img=ImageTk.PhotoImage(Image.open("ak.png"))
+#    Images as buttons had to be removed for the app to work, not even adding the data workd :(
 
 suceciones_frame=Frame(ventana, width=680, 
     height=680, 
@@ -922,14 +919,14 @@ suceciones_frame=Frame(ventana, width=680,
 
 # Buttons as images (Sum, product, terms)
 sum_img_buton=Button(suceciones_frame, 
-    image=sum_img,
-    command=lambda:[ak_operations(1)]).place(x=200, y=35)
+   text="Sumatoria",
+    command=lambda:[ak_operations(1)]).place(x=200, y=40)
 product_img_buton=Button(suceciones_frame, 
-    image=product_img,
-    command=lambda:[ak_operations(2)]).place(x=300, y=40)
+    text="Producto",
+    command=lambda:[ak_operations(2)]).place(x=310, y=40)
 term_img_buton=Button(suceciones_frame, 
-    image=term_img,
-    command=lambda:[ak_operations(3)]).place(x=400, y=55)
+    text="Sucesión",
+    command=lambda:[ak_operations(3)]).place(x=420, y=40)
 
 # n superior limit
 n_text=Label(suceciones_frame,
