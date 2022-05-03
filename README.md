@@ -32,4 +32,9 @@ Available operations:
 ## Successions (sum and product)
 General term, sum and product calculator
 This calculator uses recursivity to calculate every element of the general term
-The uper limit is n and the starting point or limit is k
+The uper limit is n and the starting point or limit is k.
+
+Available operations:
+1. Sum
+2. Product
+3. Succession (General Terms)
