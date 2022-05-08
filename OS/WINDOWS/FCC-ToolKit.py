@@ -24,7 +24,7 @@ def vars_n(exp):
         if i in exp:
             var_total += 1
             cont += 1
-    #print(var_total)
+
     return(var_total)
 
 # ======= Obtain all n variables in one list
@@ -55,14 +55,14 @@ def ver_sub_str(sub_str):
 
 #===== Extract sub-expresions in a string
 def extract_sub(sub_str):
-    #print("FUNC: ",sub_str)
+
     for j in range(len(sub_str)):
         if sub_str.count("(")>sub_str.count(")"):
             sub_str+=")"
     if ver_sub_str(sub_str)>1:
         sub_str=sub_str[1:-1]
     add=re.findall(r'\(.*?\)', sub_str)
-    ##print (add)
+
     return add
 
 #======= Denial of a variable, just returns an atomic expresion like ~p
@@ -99,7 +99,7 @@ def biconditional(exp):
         format_bi=""
         # p BI q
         if exp[i] =="↔" and exp[i-2]!="~" and exp[i+1]!="~" and exp[i+1]!="(" and exp[i-1]!=")":
-            #print("1")
+
             remp=exp[(i-2):(i+3)]
             var1=exp[i-1]
             var2=exp[i+1]
@@ -107,8 +107,7 @@ def biconditional(exp):
             temp=temp.replace(remp,format_bi)
         # ~p BI ~q
         elif exp[i] =="↔" and exp[i-2]=="~" and exp[i+1]=="~" and exp[i+1]!="(" and exp[i-1]!=")":
-            #print("2")
-            #print("2",exp[(i-3):(i+4)])
+
             remp=exp[(i-3):(i+4)]
             var1="~"+exp[i-1]
             var2="~"+exp[i+2]
@@ -116,7 +115,7 @@ def biconditional(exp):
             temp=temp.replace(remp,format_bi)
         # ~p BI q
         elif exp[i] =="↔" and exp[i-2]=="~" and exp[i+1]!="~" and exp[i+1]!="(" and exp[i-1]!=")":
-            #print("3")
+
             remp=exp[(i-3):(i+3)]
             var1="~"+exp[i-1]
             var2=exp[i+1]
@@ -124,13 +123,13 @@ def biconditional(exp):
             temp=temp.replace(remp,format_bi)
         # p BI ~q
         elif exp[i] =="↔" and exp[i-2]!="~" and exp[i+1]=="~" and exp[i+1]!="(" and exp[i-1]!=")":
-            #print("4")
+
             var1=exp[i-1]
             var2="~"+exp[i+2]
             format_bi="(({0}→{1})^({1}→{0}))".format(var1,var2)
             remp=exp[(i-2):(i+4)]
             temp=temp.replace(remp,format_bi)
-        #print("BI : ",temp)
+
     return temp
 
 #======= Main function (Checks for implications, evaluates and controls the sub-expresion process, creates the table)
@@ -146,19 +145,19 @@ def main(exp):
         remp=""
         temp_imp=""
         if exp[i] =="→" and exp[i-2]!="~" and exp[i+1]!="~":
-            #print("1", )
+
             remp=exp[(i-2):(i+3)]
             temp_imp+="(~";
             temp_imp+=exp[i-1];
             temp_imp+="V"
             temp_imp+=exp[i+1];
             temp_imp+=")";
-            #print(remp," : ", temp_imp)
+
             exp=exp.replace(remp,temp_imp)
 
         # ~p imp ~q
         elif exp[i] =="→" and exp[i-2]=="~" and exp[i+1]=="~":
-            #print("2",exp[(i-3):(i+4)])
+
             remp=exp[(i-3):(i+4)]
             temp_imp+="(";
             #temp_imp+=exp[i-2];
@@ -172,7 +171,7 @@ def main(exp):
         # ~p imp q
         elif exp[i] =="→" and exp[i-2]=="~" and exp[i+1]!="~":
             remp=exp[(i-3):(i+3)]
-            #print("3", remp)
+
             temp_imp+="(~(";
             temp_imp+=exp[i-2];
             temp_imp+=exp[i-1];
@@ -183,7 +182,7 @@ def main(exp):
             exp=exp.replace(remp,temp_imp)
         # p imp ~q
         elif exp[i] =="→" and exp[i-2]!="~" and exp[i+1]=="~":
-            #print("4",exp[(i-2):(i+4)])
+
             remp=exp[(i-2):(i+4)]
             temp_imp+="(~";
             temp_imp+=exp[i-1];
@@ -363,7 +362,7 @@ def main(exp):
             for var_rempl in tokens:
                 if var_rempl in ev_sub_exp:
                     ev_sub_exp=ev_sub_exp.replace(str(var_rempl),str(row_evaluar[0+cont]))
-                    #print("REP: ",ev_sub_exp)
+
                     cont+=1
                 else:
                     cont+=1
@@ -572,7 +571,6 @@ def reflexivity(relation):
             if x_values[i] == relation[j][1]:
                 refex_res[i]=1
     
-    print(refex_res)
     cont=0
     for c in range(len(refex_res)):
         if refex_res[c]==1:
@@ -613,7 +611,7 @@ def transitivity(relation):
         x=relation[i][0]
         y=relation[i][1]
         z=""
-        # print("Verifying x,y: ", relation[i])
+
         cont=0
         rels_yz=0
         for j in range(len(relation)):
@@ -621,17 +619,16 @@ def transitivity(relation):
             if relation[j][0]==y:
                 z=relation[j][1]
                 rels_yz+=1
-                # print("\tFound y,z :", relation[j])
+
                 for c in range(len(relation)):
 
                     if relation[c][0] == x and relation[c][1] == z:
                         cont+=1
-                        # print("\t\tYES")
+
                         break
-                    # else:
-                        # print("\t\tNot found  [",x,",",z,"] VER: ", relation[c] )
+
         if cont==rels_yz:
-            # print("\tRELACION ES TRANSITIVA")
+
             res_trans[i]=1
 
     cont=0
@@ -660,7 +657,7 @@ def function(relation):
             fun_res.append(1)
         else:
             fun_res.append(0)
-        print(temp)
+
 
     
     cont=0
@@ -720,8 +717,7 @@ def update_options(selection):
         operator_selec=dif_sim_op
     elif selection=="Cardinalidad":
         operator_selec=card
-    else:
-        print("No funciono jeje")
+
     selec_option.config(values=operator_selec)
     selec_option.current(0)
 def str_list(string_set):
@@ -866,7 +862,6 @@ def relations_main():
         
         #   Dominio
         x=x_obtain(R)
-        print(x)
         r_domain.delete("1.0", "end")
         r_domain.insert("end", "Dominio : {")
         for i in range(len (x)):
@@ -1124,9 +1119,8 @@ res_buttton= Button(sets_frame,
     text="Calcular resultado", 
     command=lambda:[calculate_result()])
 res_buttton.place(x=410, y=210)
-#sets_frame.after(1000,print("Hola"))
-#update_options(op_selec.get())
-#op_selec.bind("<<ComoboxSelected>>", update_options(op_selec.get()))    
+
+  
 #---------Show result---------------
 set_res=StringVar()
 set_res.set("Result is shown here")
