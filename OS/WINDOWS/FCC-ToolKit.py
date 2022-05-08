@@ -1,12 +1,16 @@
 
+
+from cProfile import label
 from cgitb import text
 from tkinter import Label,Button, StringVar,ttk,Entry,Frame,Tk, Text
 from tkinter import *
 from turtle import width
 
+
 from PIL import Image, ImageTk 
 
 import re
+from setuptools import Command
 from tabulate import tabulate
 
 
@@ -14,12 +18,12 @@ from tabulate import tabulate
 # ===== Count the number of n variables in expresion
 def vars_n(exp):
     array=["P","Q","R","S","U","W","X","Y","Z"]
-    cont=0
-    var_total=0     
+    cont = 0
+    var_total = 0     
     for i in array:
         if i in exp:
-            var_total+=1
-            cont+=1
+            var_total += 1
+            cont += 1
     #print(var_total)
     return(var_total)
 
@@ -35,6 +39,7 @@ def vars_list(proposition):
                     li.append(proposition[i])
                 cont+=1
     return li
+
 ## ======= Obtain counter of sub-expresions in a expresion 
 def ver_sub_str(sub_str):
     i=0
@@ -61,6 +66,7 @@ def extract_sub(sub_str):
     return add
 
 #======= Denial of a variable, just returns an atomic expresion like ~p
+
 li_not=list()
 def atomic_not(exp):
     global li_not
@@ -534,6 +540,142 @@ def product_ak(n, k ,ak):
     else:
         return 0
 
+
+# ================RELATIONS===================================
+
+    # Dominio 
+def x_obtain(relation):
+    x_list=list()
+    for i in range(len(relation)):
+        if relation[i][0] not in x_list:
+            x_list.append(relation[i][0])
+
+    return x_list
+
+    # Condominio
+def y_obtain(relation):
+    y_list=list()
+    for i in range(len(relation)):
+        if relation[i][1] not in y_list:
+            y_list.append(relation[i][1])
+    return y_list
+
+def reflexivity(relation):
+    refex_res=list()
+    x_values=x_obtain(relation)
+
+    for i in range(len(x_values)):
+        refex_res.append(0)
+
+    for i in range(len(x_values)):
+        for j in range(len (relation)):
+            if x_values[i] == relation[j][1]:
+                refex_res[i]=1
+    
+    print(refex_res)
+    cont=0
+    for c in range(len(refex_res)):
+        if refex_res[c]==1:
+            cont+=1
+    if cont==len(x_values):
+        return 1
+    else:
+        return 0
+
+def symmetry(relation):
+
+    sym_list=list()
+    cont=0
+    for i in range(len(relation)):
+        sym_list.append(0)
+
+    for i in range(len (relation)):
+        for j in range(len(relation)):
+            if relation[i][0] == relation[j][1] and relation[i][1] == relation[j][0]:
+                sym_list[i]=1
+
+    for c in range(len(sym_list)):
+        if sym_list[c]==1:
+            cont+=1
+    if cont==len(relation):
+        return 1
+    else:
+        return 0
+
+def transitivity(relation):
+    res_trans=list()
+    rels_yz=0
+    for i in range(len(relation)):
+        res_trans.append(0)
+
+    cont=0
+    for i in range(len(relation)):
+        x=relation[i][0]
+        y=relation[i][1]
+        z=""
+        # print("Verifying x,y: ", relation[i])
+        cont=0
+        rels_yz=0
+        for j in range(len(relation)):
+
+            if relation[j][0]==y:
+                z=relation[j][1]
+                rels_yz+=1
+                # print("\tFound y,z :", relation[j])
+                for c in range(len(relation)):
+
+                    if relation[c][0] == x and relation[c][1] == z:
+                        cont+=1
+                        # print("\t\tYES")
+                        break
+                    # else:
+                        # print("\t\tNot found  [",x,",",z,"] VER: ", relation[c] )
+        if cont==rels_yz:
+            # print("\tRELACION ES TRANSITIVA")
+            res_trans[i]=1
+
+    cont=0
+    for i in range(len(res_trans)):
+        if res_trans[i]==1:
+            cont+=1
+    if cont==len(relation):
+        return 1
+    else:
+        return 0
+
+# Verifies if a viven relation comes from a FUNCTION (x with more than one y value does not come from a fuction)
+def function(relation):
+
+    fun_res=list()
+    x_list=x_obtain(relation)
+    temp=list()
+
+    for i in range(len(x_list)):
+        cont=0
+        temp=list()
+        for j in range(len(relation)):
+            if x_list[i]==relation[j][0]:
+                temp.append(relation[j])
+        if len(temp)==1:
+            fun_res.append(1)
+        else:
+            fun_res.append(0)
+        print(temp)
+
+    
+    cont=0
+    for i in range(len(fun_res)):
+        if fun_res[i]==1:
+            cont+=1
+    if cont==len(relation):
+        return 1
+    else:
+        return 0
+
+
+
+
+
 ventana=Tk()
 
 ventana.title("FCC TOOLKIT 2022")
@@ -678,7 +820,7 @@ def calculate_result():
         res_lable.config(text="!Error!")
 
 
-#=====successions=======
+#=====SUCCESIONS===============================================
 def ak_operations(opt):
     global final_res
     final_res=""
@@ -705,55 +847,137 @@ def ak_operations(opt):
     except:
         result_ak.insert("end", """ERROR : Intenta cuidar tus valores de n y k""")
 
+
 def clean_output():
     result_ak.delete("1.0", "end")
     product_res_entry.set("Producto :")
     sum_res_entry.set("Suma :")
-#=====MENU=============
+
+# ===========RELATIONS====================================================
+def relations_main():
+    try:
+        raw_re=r_entry.get()
+        R=re.findall(r'\(.*?\)', raw_re)
+        # Delete all the parenthesis and make lists inside lists with "x","y"
+        for i in range(len(R)):
+            R[i]=R[i].replace("(", "")
+            R[i]=R[i].replace(")", "")
+            R[i]=R[i].split(",")
+        
+        #   Dominio
+        x=x_obtain(R)
+        print(x)
+        r_domain.delete("1.0", "end")
+        r_domain.insert("end", "Dominio : {")
+        for i in range(len (x)):
+            r_domain.insert("end", x[i])
+            if i+1!=len(x):
+                r_domain.insert("end", ",")
+        r_domain.insert("end", "}")
+        
+        #    Condominio
+        y=y_obtain(R)
+        r_condomain.delete("1.0", "end")
+        r_condomain.insert("end", "Condominio : {")
+        for i in range(len (y)):
+            r_condomain.insert("end", y[i])
+            if i+1!=len(y):
+                r_condomain.insert("end", ",")
+        r_condomain.insert("end", "}")
+
+
+        reflex_res=reflexivity(R)
+
+        sym_res=symmetry(R)
+
+        trans_res=transitivity(R)
+
+
+        if reflex_res:
+            reflex.config(text="Reflexividad : SI")
+        else:
+            reflex.config(text="Reflexividad : NO")
+        if sym_res:
+            sym.config(text="Simetria : SI")
+        else:
+            sym.config(text="Simetria : NO")
+        if trans_res:
+            trans.config(text="Transitividad : SI")
+        else:
+            trans.config(text="Transitividad : NO")
+
+
+    except:
+        r_domain.delete("1.0", "end")
+        r_domain.insert("end","ERROR")
+        r_condomain.delete("1.0", "end")
+        r_condomain.insert("end","ERROR")
+        reflex.config(text="ERROR")
+        sym.config(text="ERROR")
+        trans.config(text="ERROR")
+
+#============MENU======================
 def change_menu(option):
-    if option=="INFO":
+    if option==1:
         t_t_m.place_forget()
         frame_tt.place_forget()
         sets_frame.place_forget()
         suceciones_frame.place_forget()
+        relat_frame.place_forget()
         info.place(x=50, y=240)
-    elif option=="TTG":
+    elif option==2:
         info.place_forget()
         sets_frame.place_forget()
         suceciones_frame.place_forget()
+        relat_frame.place_forget()
         t_t_m.place(x=50, y=180)
         frame_tt.place(x=50, y=300)
-    elif option=="SETS":
+    elif option==3:
         info.place_forget()
         t_t_m.place_forget() 
         frame_tt.place_forget()
         suceciones_frame.place_forget()
+        relat_frame.place_forget()
         sets_frame.place(x=50, y=180)
-    elif option=="Suc":
+    elif option==4:
         info.place_forget()
         t_t_m.place_forget() 
         frame_tt.place_forget()
         sets_frame.place_forget()
+        relat_frame.place_forget()
         suceciones_frame.place(x=50, y=180)
+    elif option==5:
+        info.place_forget()
+        t_t_m.place_forget() 
+        frame_tt.place_forget()
+        sets_frame.place_forget()
+        suceciones_frame.place_forget()
+        relat_frame.place(x=50, y=180)
 
 ##========Up MENU==========================================
 mnu=Frame(ventana, width=950, height=100, background="grey")
 mnu.pack(side="top")
 etiqueta1=Label(mnu, text="MENU", font="Helvetica 20", background="grey")
 etiqueta1.place(x=20, y=15)
+
+    #-----Buttons------------------------------------
 boton_info=Button(mnu, text="INFO", height=2, width=8, 
-    command=lambda:[change_menu("INFO")])
+    command=lambda:[change_menu(1)])
 boton_info.place(x=20,y=55)
 boton_ttm=Button(mnu, text="Tablas De Verdad", height=2, width=15, 
-    command=lambda: [change_menu("TTG")])
-boton_ttm.place(x=150,y=55)
+    command=lambda: [change_menu(2)])
+boton_ttm.place(x=110,y=55)
 boton_sets=Button(mnu, text="Conjuntos", height=2, width=10, 
-    command=lambda:[change_menu("SETS")])
-boton_sets.place(x=340, y=55)
+    command=lambda:[change_menu(3)])
+boton_sets.place(x=250, y=55)
 
 boton_suc=Button(mnu ,text="Sucesiones", height=2, width=11,
-    command=lambda:[change_menu("Suc")])
-boton_suc.place(x=490, y=55)
+    command=lambda:[change_menu(4)])
+boton_suc.place(x=360, y=55)
+
+boton_suc=Button(mnu ,text="Relaciones", height=2, width=11,
+    command=lambda:[change_menu(5)])
+boton_suc.place(x=480, y=55)
 
 ## ========== INFO ==========================================
 info=Frame(ventana, width=760, height=500, background="Black")
@@ -775,7 +999,6 @@ etiqueta_exp.place(
     y=10)
 
     # Buttons of operators
-
 and_button=Button(t_t_m,
     text="^",
     command=lambda:[insert_op('^')]).place(
@@ -845,7 +1068,7 @@ y_scroll_tt.config(command=truth_table.yview)
 x_scroll_tt.config(command=truth_table.xview)
 
 
-#========Sets=============================
+#=======================SETS=======================================
 sets_frame=Frame(ventana, width=760, height=400, background="grey")
 
 tag_sets=Label(sets_frame, 
@@ -859,7 +1082,8 @@ setb_label=Label(sets_frame, text="B={")
 setb_label.place(x=10,y=80)
 setc_label=Label(sets_frame, text="C={")
 setc_label.place(x=10,y=120)
-    ## ===ENTRY FOR SETS OF USER=== ##
+
+## --------ENTRY FOR SETS OF USER----------##
 sets_a=Entry(sets_frame, width=25)
 sets_a.place(x=40, y=40)
 sets_b=Entry(sets_frame, width=25)
@@ -867,7 +1091,7 @@ sets_b.place(x=40, y=80)
 sets_c=Entry(sets_frame, width=25)
 sets_c.place(x=40, y=120)
 
-#=====Operaciones Disponibles=====================#
+#---------Operaciones Disponibles----------------
 tag_operator=Label(sets_frame, 
     text="Operadores: ", 
     font="Helvetica 20", 
@@ -884,7 +1108,7 @@ bot_act=Button(sets_frame,
     command=lambda:[update_options(op_selec.get())])
 bot_act.place(x=410, y=170)
 
-#====Opciones=====================================
+#----------Opciones------------
 tag_options=Label(sets_frame, 
     text="Operaciones: ", 
     font="Helvetica 20", 
@@ -895,7 +1119,7 @@ tag_options.place(x=0, y=200)
 selec_option=ttk.Combobox(sets_frame)
 selec_option.place(x=200, y=210)
 
-##=====Calcular resultado============
+##---------Calcular resultado---------------
 res_buttton= Button(sets_frame, 
     text="Calcular resultado", 
     command=lambda:[calculate_result()])
@@ -903,7 +1127,7 @@ res_buttton.place(x=410, y=210)
 #sets_frame.after(1000,print("Hola"))
 #update_options(op_selec.get())
 #op_selec.bind("<<ComoboxSelected>>", update_options(op_selec.get()))    
-#=======Show result==================
+#---------Show result---------------
 set_res=StringVar()
 set_res.set("Result is shown here")
 res_lable=Entry(sets_frame, 
@@ -911,7 +1135,7 @@ res_lable=Entry(sets_frame,
     width=70)
 res_lable.place(x=0, y=270)
 
-#======= Sucesiones ==========
+#======= Sucesiones ========================================
 
 #    IMAGES
 sum_img=ImageTk.PhotoImage(Image.open("sum.png"))
@@ -970,7 +1194,7 @@ opt_lab=Label(suceciones_frame,
 
 
 
-    # Results of the ak terms, not sum or product results
+# Results of the ak terms, not sum or product results
 
 ak_ext_frame=Frame(suceciones_frame)
 ak_ext_frame.place(x=10, y=140)
@@ -996,6 +1220,60 @@ clean_results=Button(suceciones_frame,
     text="Limpiar salidas",
     command=lambda:[clean_output()])
 clean_results.place(x=350, y=250)
+
+
+#==================RELATIONS=================
+
+relat_frame=Frame(ventana ,width=680, height=400)
+
+rel_labl=Label(relat_frame, text="Relación =")
+rel_labl.place(x=1, y=0)
+
+r_entry=Entry(relat_frame, width=40)
+r_entry.place(x=20, y=20)
+
+r_calculate=Button(relat_frame, text="Calcular", command=relations_main)
+r_calculate.place(x=280, y=15)
+
+# DOMAIN
+domain_frame=Frame(relat_frame, width=370, height=60)
+domain_frame.place(x=20, y=60)
+
+y_scrolldomain_R=Scrollbar(domain_frame, orient='vertical')
+y_scrolldomain_R.pack(side=RIGHT, fill="y")
+
+r_domain=Text(domain_frame, width=40, heigh=6, yscrollcommand=y_scrolldomain_R.set)
+r_domain.insert("end","Dominio : { }")
+r_domain.pack(side=LEFT)
+
+y_scrolldomain_R.config(command=r_domain.yview)
+
+# CONDOMAIN
+condomain_frame=Frame(relat_frame, width=370, height=120 )
+condomain_frame.place(x=20, y=200)
+
+y_scrollcondomain_R=Scrollbar(condomain_frame, orient='vertical')
+y_scrollcondomain_R.pack(side=RIGHT, fill="y")
+
+r_condomain=Text(condomain_frame, width=40, heigh=6, yscrollcommand=y_scrollcondomain_R.set)
+r_condomain.insert("end","Condominio : { }")
+r_condomain.pack(side=LEFT)
+
+y_scrollcondomain_R.config(command=r_condomain.yview)
+
+# REFLEXIVITY
+reflex=Label(relat_frame, text="Reflexividad : ", background="white")
+reflex.place(x=400, y=20)
+
+# SYMMETRY
+sym=Label(relat_frame, text="Simetría : ", background="white")
+sym.place(x=400, y=60)
+
+# TRANSITIVITY
+trans=Label(relat_frame, text="Transitividad : ", background="white")
+trans.place(x=400, y=100)
+
+
 
 #========Main loop
 ventana.mainloop()
