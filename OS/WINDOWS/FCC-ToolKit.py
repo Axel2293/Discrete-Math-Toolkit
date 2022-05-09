@@ -887,6 +887,7 @@ def relations_main():
 
         trans_res=transitivity(R)
 
+        function_res=function(R)
 
         if reflex_res:
             reflex.config(text="Reflexividad : SI")
@@ -900,6 +901,10 @@ def relations_main():
             trans.config(text="Transitividad : SI")
         else:
             trans.config(text="Transitividad : NO")
+        if function_res:
+            funct.config(text="Función : SI")
+        else:
+            funct.config(text="Función : NO")
 
 
     except:
@@ -1267,7 +1272,8 @@ sym.place(x=400, y=60)
 trans=Label(relat_frame, text="Transitividad : ", background="white")
 trans.place(x=400, y=100)
 
-
+funct=Label(relat_frame, text="Función : ", background="white")
+funct.place(x=400, y=140)
 
 #========Main loop
 ventana.mainloop()
