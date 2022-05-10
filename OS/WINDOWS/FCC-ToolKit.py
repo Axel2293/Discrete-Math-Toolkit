@@ -1240,7 +1240,7 @@ clean_results.place(x=350, y=250)
 
 #==================RELATIONS=================
 
-relat_frame=Frame(ventana ,width=680, height=400)
+relat_frame=Frame(ventana ,width=730, height=400, background="grey")
 
 rel_labl=Label(relat_frame, text="Relación =")
 rel_labl.place(x=1, y=0)
@@ -1253,7 +1253,7 @@ r_calculate.place(x=280, y=15)
 
 # DOMAIN
 domain_frame=Frame(relat_frame, width=370, height=60)
-domain_frame.place(x=20, y=60)
+domain_frame.place(x=20, y=50)
 
 y_scrolldomain_R=Scrollbar(domain_frame, orient='vertical')
 y_scrolldomain_R.pack(side=RIGHT, fill="y")
@@ -1266,7 +1266,7 @@ y_scrolldomain_R.config(command=r_domain.yview)
 
 # CONDOMAIN
 condomain_frame=Frame(relat_frame, width=370, height=120 )
-condomain_frame.place(x=20, y=170)
+condomain_frame.place(x=20, y=160)
 
 y_scrollcondomain_R=Scrollbar(condomain_frame, orient='vertical')
 y_scrollcondomain_R.pack(side=RIGHT, fill="y")
@@ -1279,10 +1279,10 @@ y_scrollcondomain_R.config(command=r_condomain.yview)
 
 # REFLEXIVITY
 reflex=Label(relat_frame, text="Reflexividad : ", background="white")
-reflex.place(x=400, y=20)
+reflex.place(x=400, y=15)
     #LOG FRAME
 log_ref_frm=Frame(relat_frame)
-log_ref_frm.place(x=400, y=50)
+log_ref_frm.place(x=400, y=40)
     #SCROLL
 log_ref_scr=Scrollbar(log_ref_frm, orient='vertical')
 log_ref_scr.pack(side=RIGHT, fill='y')
@@ -1294,7 +1294,7 @@ log_ref_scr.config(command=log_reflex.yview)
 
 # SYMMETRY
 sym=Label(relat_frame, text="Simetría : ", background="white")
-sym.place(x=400, y=140)
+sym.place(x=400, y=145)
     #LOG FRAME
 log_sym_frm=Frame(relat_frame)
 log_sym_frm.place(x=400, y=170)
@@ -1310,10 +1310,10 @@ y_scroll_logsym.config(command=log_sym.yview)
 
 # TRANSITIVITY
 trans=Label(relat_frame, text="Transitividad : ", background="white")
-trans.place(x=400, y=260)
+trans.place(x=400, y=273)
     #LOG FRAME
 log_tran_frm=Frame(relat_frame)
-log_tran_frm.place(x=370, y=290)
+log_tran_frm.place(x=370, y=295)
     #SCROLL
 log_tran_scr=Scrollbar(log_tran_frm, orient='vertical')
 log_tran_scr.pack(side=RIGHT, fill='y')
