@@ -1,10 +1,8 @@
-
-
-from cProfile import label
-from cgitb import text
+# Welcome to the FCC ToolKit, this proyect was made for my discrethe math class and took me some time to finish it
+# on May 9 i finished the 
 from tkinter import Label,Button, StringVar,ttk,Entry,Frame,Tk, Text
 from tkinter import *
-from turtle import width
+
 
 
 from PIL import Image, ImageTk 
@@ -563,13 +561,21 @@ def reflexivity(relation):
     refex_res=list()
     x_values=x_obtain(relation)
 
+    # Initialize the final validation list with the lenght of the x values
     for i in range(len(x_values)):
         refex_res.append(0)
-
+    
+    # Validate every x and search (x,x) 
     for i in range(len(x_values)):
+        log_reflex.insert('end', '\n#- Buscando (x,x)=({},{})\n'.format(x_values[i],x_values[i]))
         for j in range(len (relation)):
-            if x_values[i] == relation[j][1]:
+            
+            if x_values[i] == relation[j][1] and x_values[i] == relation[j][0]:
                 refex_res[i]=1
+                log_reflex.insert('end', '\t¡¡ Found ({},{}) in R !!\n'.format(x_values[i],x_values[i]))
+                break
+            else:
+                log_reflex.insert('end', '\t- Not found in R = ({},{})\n'.format(relation[j][0],relation[j][1]))
     
     cont=0
     for c in range(len(refex_res)):
@@ -584,13 +590,18 @@ def symmetry(relation):
 
     sym_list=list()
     cont=0
+    #Initialize the list with results of verification
     for i in range(len(relation)):
         sym_list.append(0)
 
+
     for i in range(len (relation)):
+        log_sym.insert('end', '\n#- Verificando ({},{})\n'.format(relation[i][0], relation[i][1]))
         for j in range(len(relation)):
             if relation[i][0] == relation[j][1] and relation[i][1] == relation[j][0]:
+                log_sym.insert('end', '\t¡¡ Encontrado ({},{})\n'.format(relation[i][1], relation[i][0]))
                 sym_list[i]=1
+                break
 
     for c in range(len(sym_list)):
         if sym_list[c]==1:
@@ -611,21 +622,20 @@ def transitivity(relation):
         x=relation[i][0]
         y=relation[i][1]
         z=""
-
         cont=0
         rels_yz=0
         for j in range(len(relation)):
-
             if relation[j][0]==y:
                 z=relation[j][1]
+                log_tran.insert('end', '\n#- Verificando (x,y)=({},{}) (y,z)=({},{})\n'.format(x,y,y,z))
                 rels_yz+=1
-
                 for c in range(len(relation)):
-
                     if relation[c][0] == x and relation[c][1] == z:
                         cont+=1
-
+                        log_tran.insert('end', '\t¡ Encontrado (x,z)=({},{})\n  !'.format(x,z))
                         break
+                    else:
+                        log_tran.insert('end', '\t- No encontrado (x,z)=({},{})\n'.format(x,z))
 
         if cont==rels_yz:
 
@@ -650,14 +660,17 @@ def function(relation):
     for i in range(len(x_list)):
         cont=0
         temp=list()
+        log_fun.insert('end', '\n#- Verificando Relaciones de x={}\n'.format(x_list[i]))
         for j in range(len(relation)):
             if x_list[i]==relation[j][0]:
                 temp.append(relation[j])
         if len(temp)==1:
+            log_fun.insert('end', '\t! x={} tiene una relación ¡\n'.format(x_list[i]))
             fun_res.append(1)
         else:
+            log_fun.insert('end', '\t- x={} tiene mas de una relación- \n'.format(x_list[i]))
             fun_res.append(0)
-
+    
 
     
     cont=0
@@ -880,34 +893,38 @@ def relations_main():
                 r_condomain.insert("end", ",")
         r_condomain.insert("end", "}")
 
-
+        log_reflex.delete('1.0','end')
         reflex_res=reflexivity(R)
 
+        log_sym.delete('1.0', 'end')
         sym_res=symmetry(R)
 
+        log_tran.delete('1.0', 'end')
         trans_res=transitivity(R)
 
+        log_fun.delete('1.0', 'end')
         function_res=function(R)
 
         if reflex_res:
-            reflex.config(text="Reflexividad : SI")
+            reflex.config(text="Reflexividad : SI", background='#7AFF62')
         else:
-            reflex.config(text="Reflexividad : NO")
+            reflex.config(text="Reflexividad : NO",background='#FF6747')
         if sym_res:
-            sym.config(text="Simetria : SI")
+            sym.config(text="Simetria : SI", background='#7AFF62')
         else:
-            sym.config(text="Simetria : NO")
+            sym.config(text="Simetria : NO", background='#FF6747')
         if trans_res:
-            trans.config(text="Transitividad : SI")
+            trans.config(text="Transitividad : SI", background='#7AFF62')
         else:
-            trans.config(text="Transitividad : NO")
+            trans.config(text="Transitividad : NO", background='#FF6747')
         if function_res:
-            funct.config(text="Función : SI")
+            funct.config(text="Función : SI", background='#7AFF62')
         else:
-            funct.config(text="Función : NO")
+            funct.config(text="Función : NO", background='#FF6747')
 
 
     except:
+
         r_domain.delete("1.0", "end")
         r_domain.insert("end","ERROR")
         r_condomain.delete("1.0", "end")
@@ -1249,7 +1266,7 @@ y_scrolldomain_R.config(command=r_domain.yview)
 
 # CONDOMAIN
 condomain_frame=Frame(relat_frame, width=370, height=120 )
-condomain_frame.place(x=20, y=200)
+condomain_frame.place(x=20, y=170)
 
 y_scrollcondomain_R=Scrollbar(condomain_frame, orient='vertical')
 y_scrollcondomain_R.pack(side=RIGHT, fill="y")
@@ -1263,17 +1280,66 @@ y_scrollcondomain_R.config(command=r_condomain.yview)
 # REFLEXIVITY
 reflex=Label(relat_frame, text="Reflexividad : ", background="white")
 reflex.place(x=400, y=20)
+    #LOG FRAME
+log_ref_frm=Frame(relat_frame)
+log_ref_frm.place(x=400, y=50)
+    #SCROLL
+log_ref_scr=Scrollbar(log_ref_frm, orient='vertical')
+log_ref_scr.pack(side=RIGHT, fill='y')
+    #LOG
+log_reflex=Text(log_ref_frm, width=35, height=6, yscrollcommand=log_ref_scr.set)
+log_reflex.pack(side=LEFT)
+        #Scroll Command
+log_ref_scr.config(command=log_reflex.yview)
 
 # SYMMETRY
 sym=Label(relat_frame, text="Simetría : ", background="white")
-sym.place(x=400, y=60)
+sym.place(x=400, y=140)
+    #LOG FRAME
+log_sym_frm=Frame(relat_frame)
+log_sym_frm.place(x=400, y=170)
+        #SCROLL
+y_scroll_logsym=Scrollbar(log_sym_frm, orient='vertical')
+y_scroll_logsym.pack(side=RIGHT, fill='y')
+        #LOG
+log_sym=Text(log_sym_frm, width=35, height=6, yscrollcommand=y_scroll_logsym.set)
+log_sym.pack(side=LEFT)
+            #Scroll command
+y_scroll_logsym.config(command=log_sym.yview)
+
 
 # TRANSITIVITY
 trans=Label(relat_frame, text="Transitividad : ", background="white")
-trans.place(x=400, y=100)
+trans.place(x=400, y=260)
+    #LOG FRAME
+log_tran_frm=Frame(relat_frame)
+log_tran_frm.place(x=370, y=290)
+    #SCROLL
+log_tran_scr=Scrollbar(log_tran_frm, orient='vertical')
+log_tran_scr.pack(side=RIGHT, fill='y')
+    #LOG
+log_tran=Text(log_tran_frm, width=40, height=6, yscrollcommand=log_tran_scr.set)
+log_tran.pack(side=LEFT)
+        #Scroll command
+log_tran_scr.config(command=log_tran.yview)
 
+# FUNCTION
 funct=Label(relat_frame, text="Función : ", background="white")
-funct.place(x=400, y=140)
+funct.place(x=20, y=265)
+    #LOG FRAME
+log_fun_frm=Frame(relat_frame)
+log_fun_frm.place(x=20, y=290)
+    #SCROLL
+log_fun_scr=Scrollbar(log_fun_frm, orient='vertical')
+log_fun_scr.pack(side=RIGHT, fill='y')
+    #LOG
+log_fun=Text(log_fun_frm, width=40, height=6, yscrollcommand=log_fun_scr.set)
+log_fun.pack(side=LEFT)
+        #Scroll Command
+log_fun_scr.config(command=log_fun.yview)
+
+
+
 
 #========Main loop
 ventana.mainloop()
