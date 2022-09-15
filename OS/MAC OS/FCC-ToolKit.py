@@ -535,7 +535,7 @@ def product_ak(n, k ,ak):
 ventana=Tk()
 
 ventana.title("FCC TOOLKIT 2022")
-ventana.geometry("800x600")
+ventana.geometry("800x555")
 ventana.config(bg="white")
 
 exp=""
@@ -713,26 +713,26 @@ def change_menu(option):
         t_t_m.place_forget()
         frame_tt.place_forget()
         sets_frame.place_forget()
-        suceciones_frame.place_forget()
-        info.place(x=50, y=240)
+        sucesiones_frame.place_forget()
+        info.place(x=90, y=270)
     elif option=="TTG":
         info.place_forget()
         sets_frame.place_forget()
-        suceciones_frame.place_forget()
-        t_t_m.place(x=50, y=180)
-        frame_tt.place(x=50, y=300)
+        sucesiones_frame.place_forget()
+        t_t_m.place(x=30, y=120)
+        frame_tt.place(x=40, y=260)
     elif option=="SETS":
         info.place_forget()
         t_t_m.place_forget() 
         frame_tt.place_forget()
-        suceciones_frame.place_forget()
-        sets_frame.place(x=50, y=180)
+        sucesiones_frame.place_forget()
+        sets_frame.place(x=30, y=130)
     elif option=="Suc":
         info.place_forget()
         t_t_m.place_forget() 
         frame_tt.place_forget()
         sets_frame.place_forget()
-        suceciones_frame.place(x=50, y=180)
+        sucesiones_frame.place(x=30, y=130)
 
 ##========Up MENU==========================================
 mnu=Frame(ventana, width=950, height=100, background="grey")
@@ -754,8 +754,8 @@ boton_suc=Button(mnu ,text="Sucesiones", height=2, width=11,
 boton_suc.place(x=490, y=55)
 
 ## ========== INFO ==========================================
-info=Frame(ventana, width=760, height=500, background="Black")
-info.place(x=20, y=180)
+info=Frame(ventana, width=760, height=500, background="white")
+info.place(x=90, y=270)
 welcome=Label(info, text="Fundamentos de ciencias computacionales\n ToolKit", font="Arial 27 bold", )
 welcome.pack(side="top")
 
@@ -773,7 +773,6 @@ etiqueta_exp.place(
     y=10)
 
     # Buttons of operators
-
 and_button=Button(t_t_m,
     text="^",
     command=lambda:[insert_op('^')]).place(
@@ -857,6 +856,7 @@ setb_label=Label(sets_frame, text="B={")
 setb_label.place(x=10,y=80)
 setc_label=Label(sets_frame, text="C={")
 setc_label.place(x=10,y=120)
+
     ## ===ENTRY FOR SETS OF USER=== ##
 sets_a=Entry(sets_frame, width=25)
 sets_a.place(x=40, y=40)
@@ -882,13 +882,12 @@ bot_act=Button(sets_frame,
     command=lambda:[update_options(op_selec.get())])
 bot_act.place(x=410, y=170)
 
-#====Opciones=====================================
+#=============Opciones===============
 tag_options=Label(sets_frame, 
     text="Operaciones: ", 
     font="Helvetica 20", 
     background="grey")
 tag_options.place(x=0, y=200)
-
 
 selec_option=ttk.Combobox(sets_frame)
 selec_option.place(x=200, y=210)
@@ -898,9 +897,7 @@ res_buttton= Button(sets_frame,
     text="Calcular resultado", 
     command=lambda:[calculate_result()])
 res_buttton.place(x=410, y=210)
-#sets_frame.after(1000,print("Hola"))
-#update_options(op_selec.get())
-#op_selec.bind("<<ComoboxSelected>>", update_options(op_selec.get()))    
+ 
 #=======Show result==================
 set_res=StringVar()
 set_res.set("Result is shown here")
@@ -909,57 +906,57 @@ res_lable=Entry(sets_frame,
     width=70)
 res_lable.place(x=0, y=270)
 
-#======= Sucesiones ==========
+#======= Sucesiones ====================
 
-#    Images as buttons had to be removed for the app to work, not even adding the data workd :(
+#    Images as buttons had to be removed for the app to work on mac
 
-suceciones_frame=Frame(ventana, width=680, 
+sucesiones_frame=Frame(ventana, width=680, 
     height=680, 
     background="grey")
 
 # Buttons as images (Sum, product, terms)
-sum_img_buton=Button(suceciones_frame, 
+sum_img_buton=Button(sucesiones_frame, 
    text="Sumatoria",
     command=lambda:[ak_operations(1)]).place(x=200, y=40)
-product_img_buton=Button(suceciones_frame, 
+product_img_buton=Button(sucesiones_frame, 
     text="Producto",
     command=lambda:[ak_operations(2)]).place(x=310, y=40)
-term_img_buton=Button(suceciones_frame, 
+term_img_buton=Button(sucesiones_frame, 
     text="Sucesión",
     command=lambda:[ak_operations(3)]).place(x=420, y=40)
 
 # n superior limit
-n_text=Label(suceciones_frame,
+n_text=Label(sucesiones_frame,
     text="n = ",
     font="Helvetica 15",
     background="grey")
 n_text.place(x=20, y=12)
-n_lim=Entry(suceciones_frame, width=10)
+n_lim=Entry(sucesiones_frame, width=10)
 n_lim.place(x=60, y=10)
 
 # k inferior limit (start point)
 
-k_text=Label(suceciones_frame, 
+k_text=Label(sucesiones_frame, 
     text="k = ",
     font="Helvetica 15",
     background="grey")
 
 k_text.place(x=20, y=50)
-k_lim=Entry(suceciones_frame, width=10)
+k_lim=Entry(sucesiones_frame, width=10)
 k_lim.place(x=60, y=50)
 
 # aₖ the general term of the user
 
-ak_text=Label(suceciones_frame,
+ak_text=Label(sucesiones_frame,
     text="aₖ = ",
     font="Helvetica 15",
     background="grey").place(
                         x=20, 
                         y=85)
-ak_user=Entry(suceciones_frame, width=10)
+ak_user=Entry(sucesiones_frame, width=10)
 ak_user.place(x=60, y=87)
 # Options
-opt_lab=Label(suceciones_frame,
+opt_lab=Label(sucesiones_frame,
     text="Presiona la opcion a calcular",
     font="Helvetica 15").place(x=200, y=0)
 
@@ -967,7 +964,7 @@ opt_lab=Label(suceciones_frame,
 
     # Results of the ak terms, not sum or product results
 
-ak_ext_frame=Frame(suceciones_frame)
+ak_ext_frame=Frame(sucesiones_frame)
 ak_ext_frame.place(x=10, y=140)
 scroll_ak=Scrollbar(ak_ext_frame, 
     orient="vertical")
@@ -980,14 +977,14 @@ result_ak.pack(side=LEFT)
 scroll_ak.config(command=result_ak.yview)
 
 sum_res_entry=StringVar()
-sum_res_screen=Entry(suceciones_frame, width=30, textvariable=sum_res_entry, state="readonly")
+sum_res_screen=Entry(sucesiones_frame, width=30, textvariable=sum_res_entry, state="readonly")
 sum_res_screen.place(x=350, y=150)
 
 product_res_entry=StringVar()
-product_res_screen=Entry(suceciones_frame, width=30, textvariable=product_res_entry, state="readonly")
+product_res_screen=Entry(sucesiones_frame, width=30, textvariable=product_res_entry, state="readonly")
 product_res_screen.place(x=350, y=200)
 
-clean_results=Button(suceciones_frame, 
+clean_results=Button(sucesiones_frame, 
     text="Limpiar salidas",
     command=lambda:[clean_output()])
 clean_results.place(x=350, y=250)
